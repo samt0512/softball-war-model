@@ -25,12 +25,13 @@ WAR is calculated using the following components:
 - ~27% of games have play-by-play available
 
 ## Project Structure
-softball-war-model/
-├── softball_scraper.py      # Scrapes ESPN API, outputs games/boxscore/pbp CSVs
-├── softball_diagnostic.py   # Data quality audit tool
-├── combine.py               # Merges split season data with deduplication
-├── war_model.py             # Core WAR calculation pipeline
-└── data/                    # Local data directory (not tracked in git)
+
+    softball-war-model/
+    ├── softball_scraper.py      # Scrapes ESPN API, outputs games/boxscore/pbp CSVs
+    ├── softball_diagnostic.py   # Data quality audit tool
+    ├── combine.py               # Merges split season data with deduplication
+    ├── war_model.py             # Core WAR calculation pipeline
+    └── data/                    # Local data directory (not tracked in git)
 
 ## Stack
 
