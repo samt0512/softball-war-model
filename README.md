@@ -59,4 +59,4 @@ python war_model.py
 
 ## Author
 
-Sam Turbeville — CS student and sports analytics researcher.
+Sam Turbeville
