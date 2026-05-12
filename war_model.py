@@ -259,11 +259,14 @@ def calculate_woba_ncaa(ncaa_df, linear_weights):
     return ncaa_df, lg_wOBA, woba_scale
 
 
-# ── WAR ────────────────────────────────────────────────────────────────────────
+# ── oWAR ───────────────────────────────────────────────────────────────────────
 
 def calculate_war(woba_df, games_df, lg_wOBA, woba_scale, min_pa=100):
     """
-    Calculate batting WAR for each player.
+    Calculate offensive WAR (oWAR) for each player.
+
+    oWAR measures the wins above replacement a player contributes
+    through batting only. Does not include pitching, fielding, or baserunning.
 
     RPW (runs per win) derived from average total runs per game across
     all games in games_df.
@@ -271,11 +274,9 @@ def calculate_war(woba_df, games_df, lg_wOBA, woba_scale, min_pa=100):
     Replacement level = bottom 20% wOBA among qualified players (PA >= min_pa).
 
     batting_runs = (wOBA - replacement_wOBA) / woba_scale * PA
-    WAR          = batting_runs / RPW
+    oWAR         = batting_runs / RPW
 
-    Note: batting WAR only — does not include pitching, fielding, or baserunning.
-
-    Returns a DataFrame sorted by WAR descending, filtered to qualified players.
+    Returns a DataFrame sorted by oWAR descending, filtered to qualified players.
     """
     total_runs  = games_df["home_score"].sum() + games_df["away_score"].sum()
     total_games = len(games_df)
@@ -288,15 +289,15 @@ def calculate_war(woba_df, games_df, lg_wOBA, woba_scale, min_pa=100):
 
     woba_df["wRAA"]         = (woba_df["wOBA"] - lg_wOBA)          / woba_scale * woba_df["PA"]
     woba_df["batting_runs"] = (woba_df["wOBA"] - replacement_wOBA) / woba_scale * woba_df["PA"]
-    woba_df["WAR"]          = woba_df["batting_runs"] / rpw
+    woba_df["oWAR"]         = woba_df["batting_runs"] / rpw
 
     war_df = woba_df[[
         "name", "season", "PA", "AB", "H", "BB",
-        "wOBA", "wRAA", "batting_runs", "WAR"
+        "wOBA", "wRAA", "batting_runs", "oWAR"
     ]].copy()
 
     war_df = war_df[war_df["PA"] >= min_pa] \
-                   .sort_values("WAR", ascending=False) \
+                   .sort_values("oWAR", ascending=False) \
                    .reset_index(drop=True)
 
     return war_df

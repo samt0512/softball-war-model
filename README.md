@@ -1,10 +1,10 @@
-# College Softball WAR Model
+# College Softball oWAR Model
 
-A Wins Above Replacement (WAR) model for NCAA D1 college softball — the first publicly available framework of its kind.
+An offensive WAR (oWAR) model for NCAA D1 college softball — the first publicly available framework of its kind.
 
 ## Overview
 
-This project builds a complete batting WAR leaderboard for D1 college softball. It combines ESPN play-by-play data (for run expectancy and linear weights) with official NCAA season stats (for complete player batting lines), producing a credible, publishable WAR leaderboard for the current D1 season.
+This project builds a complete oWAR leaderboard for D1 college softball. oWAR measures the wins above replacement a player contributes through batting only. It combines ESPN play-by-play data (for run expectancy and linear weights) with official NCAA season stats (for complete player batting lines), producing a credible, publishable oWAR leaderboard for the current D1 season.
 
 ## Methodology
 
@@ -29,11 +29,11 @@ wOBA     = wOBA_num / PA * woba_scale
 
 Scaled so that league average wOBA equals league average OBP.
 
-### WAR
+### oWAR
 ```
 wRAA         = (wOBA - lg_wOBA) / woba_scale * PA
 batting_runs = (wOBA - replacement_wOBA) / woba_scale * PA
-WAR          = batting_runs / RPW
+oWAR         = batting_runs / RPW
 ```
 
 - **Replacement level:** bottom 20% wOBA among qualified players (min 100 PA)
@@ -53,7 +53,7 @@ WAR          = batting_runs / RPW
 - Scraped via Playwright (headless=False required — Akamai bot protection)
 - 308 D1 softball teams, ~5,400 players for 2025-26 season
 - Provides: AB, H, 2B, 3B, HR, BB, HBP, SF — full PA and hit type breakdown
-- Used for all player-level wOBA and WAR inputs
+- Used for all player-level wOBA and oWAR inputs
 
 ## Project Structure
 
@@ -62,7 +62,7 @@ softball-war-model/
 ├── softball_scraper.py      # Scrapes ESPN API → games/boxscore/pbp CSVs
 ├── softball_diagnostic.py   # Data quality audit tool
 ├── combine.py               # Merges split season data with deduplication
-├── war_model.py             # Core WAR calculation pipeline
+├── war_model.py             # Core oWAR calculation pipeline
 ├── ncaa_scraper.py          # Scrapes NCAA stats → complete season batting stats
 └── data/                    # Local data directory (not tracked in git)
     ├── games/
@@ -88,10 +88,10 @@ Pipeline is fully functional end-to-end for the 2025-26 season:
 - ✅ Linear weights from PBP
 - ✅ NCAA stats scraper (308 D1 teams, ~5,400 players)
 - ✅ wOBA with proper scaling (lg_wOBA = 0.060, lg_OBP = 0.376)
-- ✅ WAR leaderboard (2,439 qualified players at 100 PA minimum)
+- ✅ oWAR leaderboard (2,439 qualified players at 100 PA minimum)
 
 **Known limitations:**
-- Batting WAR only — pitching, fielding, and baserunning not yet included
+- Offensive WAR only — pitching, fielding, and baserunning not yet included
 - 3-state RE matrix (outs only) — full 24-state base-out matrix is v2
 - Linear weights derived from 2023-25 ESPN PBP, applied to 2025-26 NCAA stats
 
