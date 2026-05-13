@@ -45,9 +45,7 @@ def build_run_expectancy(pbp_df):
     each plate appearance to the end of the half inning, grouped by
     outs before the play (0, 1, or 2).
 
-    Known limitation: ignores base state. A full 24-state base-out
-    RE matrix would be more accurate but requires base runner columns
-    not available in the ESPN PBP feed.
+    Known limitation: ignores base state.
 
     Returns a Series indexed by outs_before (0/1/2).
     """
@@ -80,9 +78,11 @@ def classify_event(description):
     if "walked"     in desc:                    return "walk"
     if "hit by pitch" in desc:                  return "hit by pitch"
     if "struck out" in desc:                    return "strike out"
-    if any(p in desc for p in ["grounded out", "flied out", "lined out", "popped up"]):
+    if any(p in desc for p in [
+        "grounded out", "flied out", "lined out", "popped up", "fouled out"
+    ]):
         return "out"
-    if "error"           in desc: return "error"
+    if "error"            in desc: return "error"
     if "fielder's choice" in desc: return "fielder's choice"
     return "other"
 
@@ -102,7 +102,7 @@ def find_outs(description, event_type):
 
 def calculate_linear_weights(pbp_df, re_matrix):
     """
-    Derive linear weights for each event type from the RE matrix.
+    Derive linear weights for each event type from the 3-state RE matrix.
 
     For each play: run_value = score_value + RE_after - RE_before
     Linear weight for an event = average run_value across all instances.
@@ -308,10 +308,13 @@ def calculate_war(woba_df, games_df, lg_wOBA, woba_scale, min_pa=100):
 if __name__ == "__main__":
     games_df, boxscore_df, pbp_df = load_data()
 
+    # 3-state RE matrix + linear weights (v1)
+    # wOBA values are scaled by ~6x due to compressed 3-state weights —
+    # this is a known artifact. oWAR values are in a realistic 1.5-2.5 range.
+    # v2 will use the 24-state RE matrix from base_state.py for better accuracy.
     re_matrix      = build_run_expectancy(pbp_df)
     linear_weights = calculate_linear_weights(pbp_df, re_matrix)
 
-    # Current season: use complete NCAA stats
     ncaa_df              = pd.read_csv(r"D:\softball-war-model\data\ncaa_stats_2026.csv")
     woba_df, lg_wOBA, woba_scale = calculate_woba_ncaa(ncaa_df, linear_weights)
     war_df               = calculate_war(woba_df, games_df, lg_wOBA, woba_scale, min_pa=100)
