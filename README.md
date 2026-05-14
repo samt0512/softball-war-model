@@ -51,7 +51,7 @@ oWAR         = batting_runs / RPW
 ### NCAA Stats (`stats.ncaa.org`)
 - Official source for complete D1 season batting stats
 - Scraped via Playwright (headless=False required — Akamai bot protection)
-- 308 D1 softball teams, ~5,400 players for 2025-26 season
+- 308 D1 softball teams, ~5,400 players for 2026 season
 - Provides: AB, H, 2B, 3B, HR, BB, HBP, SF — full PA and hit type breakdown
 - Used for all player-level wOBA and oWAR inputs
 
@@ -121,3 +121,4 @@ python war_model.py
 ## Author
 
 Sam Turbeville
+@CollegeSportsIQ
